@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BLL.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,6 +11,16 @@ namespace Game.ViewModels
     public class BaseMainViewModel : BaseViewModel
     {
         public event PropertyChangedEventHandler OnViewModelChange;
+        protected AccountModel _currentAccount { get; private set; }
+        public AccountModel CurrentAccount
+        {
+            get { return _currentAccount; }
+        }
+
+        public BaseMainViewModel(AccountModel accountModel)
+        {
+            _currentAccount = accountModel;
+        }
 
         protected void ViewModelChanged(PropertyChangedEventArgs e)
         {

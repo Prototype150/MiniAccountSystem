@@ -25,7 +25,7 @@ namespace BLL.Services
             p.AppendChar('s');
             p.AppendChar('t');
 
-            return new AccountModel("test", p, "test");
+            return new AccountModel(loginCredentials.Username, null, "test");
         }
 
         public bool Register(RegisterCredentialsModel accountModel)

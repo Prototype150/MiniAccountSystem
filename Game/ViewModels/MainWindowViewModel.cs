@@ -19,9 +19,10 @@ namespace Game.ViewModels
         {
             _accountService = accountService;
 
-            _currentViewModel = new RegisterViewModel(accountService);
-            SwitchViewsCommand = new RelayCommand(SwitchViews);
             CurrentAccount = new AccountModel(); 
+            
+            SwitchViewsCommand = new RelayCommand(SwitchViews);
+            SwitchViews("register");
         }
 
         private BaseMainViewModel _currentViewModel;
@@ -46,7 +47,7 @@ namespace Game.ViewModels
                     _currentViewModel.OnViewModelChange += ChangeViewModel;
                     break;
                 case "register":
-                    CurrentViewModel = new RegisterViewModel(_accountService);
+                    CurrentViewModel = new RegisterViewModel(_accountService, CurrentAccount);
                     _currentViewModel.OnViewModelChange += ChangeViewModel;
                     break;
                 case "main":

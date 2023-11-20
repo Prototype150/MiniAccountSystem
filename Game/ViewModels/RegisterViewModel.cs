@@ -40,7 +40,7 @@ namespace Game.ViewModels
         }
 
         public ICommand RegisterCommand { get; set; }
-        public RegisterViewModel(IAccountService accountService)
+        public RegisterViewModel(IAccountService accountService, AccountModel currentAccount) : base(currentAccount)
         {
             _accountService = accountService;
 
@@ -55,7 +55,11 @@ namespace Game.ViewModels
 
             if (_accountService.Register(new RegisterCredentialsModel(Username, password, Email, passwordRepeate)))
             {
-                
+                var acc =_accountService.Login(new LoginCredentialsModel(Username, password));
+
+                _currentAccount.Username = acc.Username;
+                _currentAccount.Email = acc.Email;
+                ViewModelChanged(new PropertyChangedEventArgs("main"));
             }
         }
     }

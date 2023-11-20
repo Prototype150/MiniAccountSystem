@@ -10,20 +10,9 @@ namespace Game.ViewModels
 {
     public class MainViewModel : BaseMainViewModel
     {
-        public MainViewModel(AccountModel currentAccount)
+        public MainViewModel(AccountModel currentAccount):base(currentAccount)
         {
-            CurrentAccount = currentAccount;
-        }
-
-        private AccountModel _currentAccount;
-        public AccountModel CurrentAccount 
-        {
-            get { return _currentAccount; }
-            set 
-            {
-                _currentAccount = value;
-                OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(CurrentAccount)));
-            }
+            
         }
     }
 }
