@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="Game.Views.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:views="clr-namespace:Game.Views"
+             xmlns:local="clr-namespace:Game"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="White">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="LOGIN" FontSize="30"/>
+                <TextBox Text="{Binding Username}" Width="200"></TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="PASSWORD" FontSize="30"/>
+                <PasswordBox PasswordChanged="Pass_PasswordChanged" x:Name="Pass" Width="200"></PasswordBox>
+            </StackPanel>
+            <Button Command="{Binding LoginCommand}" CommandParameter="{Binding PasswordContainer, RelativeSource={RelativeSource AncestorType={x:Type views:LoginView}}}" Content="LOGIN" FontSize="30"/>
+            <TextBlock FontSize="20"><Hyperlink Command="{Binding DataContext.SwitchViewsCommand, RelativeSource={RelativeSource AncestorType=local:MainWindow}}" CommandParameter="register">Switch to Register</Hyperlink></TextBlock>
+        </StackPanel>
+    </Grid>
+</UserControl>
