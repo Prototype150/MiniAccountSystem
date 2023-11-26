@@ -22,7 +22,7 @@ namespace Game.ViewModels
             CurrentAccount = new AccountModel(); 
             
             SwitchViewsCommand = new RelayCommand(SwitchViews);
-            SwitchViews("register");
+            SwitchViews("login");
         }
 
         private BaseMainViewModel _currentViewModel;
@@ -58,7 +58,7 @@ namespace Game.ViewModels
         }
 
         private void ChangeViewModel(object? sender, PropertyChangedEventArgs e)
-        {
+        { 
             SwitchViews(e.PropertyName);
         }
     }

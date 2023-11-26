@@ -11,7 +11,6 @@ namespace Game.ViewModels
     {
         private IAccountService _accountService;
 
-
         private string _userName;
         public string Username
         {
