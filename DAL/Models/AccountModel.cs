@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BLL.Models
@@ -13,6 +14,8 @@ namespace BLL.Models
         {
             Email = email;
         }
+
+        [JsonPropertyName("email")]
         public string Email { get; set; }
     }
 }

@@ -47,13 +47,13 @@ namespace Game.ViewModels
             RegisterCommand = new RelayCommand(Register);
         }
 
-        private void Register(object obj)
+        private async void Register(object obj)
         {
             var passBox = ((IPasswordContainer password, IPasswordContainer passwordRepeate))obj;
             var password = passBox.password.Password;
             var passwordRepeate = passBox.passwordRepeate.Password;
 
-            if (_accountService.Register(new RegisterCredentialsModel(Username, password, Email, passwordRepeate)))
+            if (await _accountService.Register(new RegisterCredentialsModel(Username, password, Email, passwordRepeate)))
             {
                 var acc =_accountService.Login(new LoginCredentialsModel(Username, password));
 

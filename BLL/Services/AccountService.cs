@@ -2,6 +2,7 @@
 using BLL.Services.Interfaces;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text.Json;
 
 namespace BLL.Services
 {
@@ -9,42 +10,25 @@ namespace BLL.Services
     {
         public AccountModel Login(LoginCredentialsModel loginCredentials)
         {
-            IntPtr valuePtr = IntPtr.Zero;
-
-            valuePtr = Marshal.SecureStringToGlobalAllocUnicode(loginCredentials.Password);
-            string stringPassword = Marshal.PtrToStringUni(valuePtr) ?? "";
-
-            if (string.IsNullOrWhiteSpace(loginCredentials.Username) || string.IsNullOrWhiteSpace(stringPassword))
-                return null;
-
-
-            //get AccountModel from database
-            var p = new SecureString();
-            p.AppendChar('t');
-            p.AppendChar('e');
-            p.AppendChar('s');
-            p.AppendChar('t');
-
             return new AccountModel(loginCredentials.Username, null, "test");
         }
 
-        public bool Register(RegisterCredentialsModel accountModel)
+        public async Task<bool> Register(RegisterCredentialsModel accountModel)
         {
-            IntPtr valuePtr = IntPtr.Zero;
+            HttpClient server = new HttpClient();
 
-            valuePtr = Marshal.SecureStringToGlobalAllocUnicode(accountModel.Password);
-            string stringPassword = Marshal.PtrToStringUni(valuePtr) ?? "";
+            string p = Marshal.PtrToStringUni(Marshal.SecureStringToGlobalAllocUnicode(accountModel.Password));
+            string pr = Marshal.PtrToStringUni(Marshal.SecureStringToGlobalAllocUnicode(accountModel.PasswordRepeate));
 
-            valuePtr = Marshal.SecureStringToGlobalAllocUnicode(accountModel.PasswordRepeate);
-            string stringPasswordRepeate = Marshal.PtrToStringUni(valuePtr) ?? "";
+            if (p != pr)
+                throw new Exception("Password does not match password repeat");
 
-            if (stringPassword != stringPasswordRepeate)
-                return false;
+            var account = new { Username = accountModel.Username, Email = accountModel.Email, Password = p };
+            string serializedAccount = JsonSerializer.Serialize(account);
 
-            if (string.IsNullOrWhiteSpace(accountModel.Username) || string.IsNullOrWhiteSpace(accountModel.Email))
-                return false;
-
-            //Contacting Database
+            var r = await server.GetAsync("https://localhost:7296/ac/getaccount/" + serializedAccount);
+            string accountSerialized = await r.Content.ReadAsStringAsync();
+            AccountModel acc = JsonSerializer.Deserialize<AccountModel>(accountSerialized);
 
             return true;
         }

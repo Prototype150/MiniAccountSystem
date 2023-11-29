@@ -10,6 +10,6 @@ namespace BLL.Services.Interfaces
     public interface IAccountService
     {
         AccountModel Login(LoginCredentialsModel loginCredentials);
-        bool Register(RegisterCredentialsModel accountModel);
+        Task<bool> Register(RegisterCredentialsModel accountModel);
     }
 }

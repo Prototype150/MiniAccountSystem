@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BLL.Models
@@ -14,6 +15,8 @@ namespace BLL.Models
             Username = username;
             Password = password;
         }
+
+        [JsonPropertyName("username")]
         public string Username { get; set; }
         public SecureString Password { get; set; }
     }
