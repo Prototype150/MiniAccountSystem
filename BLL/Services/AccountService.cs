@@ -19,6 +19,9 @@ namespace BLL.Services
             var response = await server.GetAsync("https://localhost:7296/ac/login/" + JsonSerializer.Serialize(account));
             string accountSerialized = await response.Content.ReadAsStringAsync();
 
+            if (string.IsNullOrWhiteSpace(accountSerialized))
+                return null;
+
             AccountModel result = JsonSerializer.Deserialize<AccountModel>(accountSerialized);
 
             return result;
