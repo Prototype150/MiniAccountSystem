@@ -1,5 +1,6 @@
 ﻿using BLL.Models;
 using BLL.Services.Interfaces;
+using System.Net.Http.Json;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text.Json;
@@ -21,16 +22,17 @@ namespace BLL.Services
             string pr = Marshal.PtrToStringUni(Marshal.SecureStringToGlobalAllocUnicode(accountModel.PasswordRepeate));
 
             if (p != pr)
-                throw new Exception("Password does not match password repeat");
+                return false;
 
             var account = new { Username = accountModel.Username, Email = accountModel.Email, Password = p };
-            string serializedAccount = JsonSerializer.Serialize(account);
+            string serializedAcc = JsonSerializer.Serialize(account);
 
-            var r = await server.GetAsync("https://localhost:7296/ac/getaccount/" + serializedAccount);
+            var r = await server.PostAsync("https://localhost:7296/ac/register", JsonContent.Create(serializedAcc));
+
             string accountSerialized = await r.Content.ReadAsStringAsync();
-            AccountModel acc = JsonSerializer.Deserialize<AccountModel>(accountSerialized);
+            bool result = JsonSerializer.Deserialize<bool>(accountSerialized);
 
-            return true;
+            return result;
         }
     }
 }
