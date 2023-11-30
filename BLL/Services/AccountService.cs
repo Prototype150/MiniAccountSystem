@@ -9,9 +9,19 @@ namespace BLL.Services
 {
     public class AccountService : IAccountService
     {
-        public AccountModel Login(LoginCredentialsModel loginCredentials)
+        public async Task<AccountModel> Login(LoginCredentialsModel loginCredentials)
         {
-            return new AccountModel(loginCredentials.Username, null, "test");
+            HttpClient server = new HttpClient();
+
+            string p = Marshal.PtrToStringUni(Marshal.SecureStringToGlobalAllocUnicode(loginCredentials.Password));
+            var account = new { Username = loginCredentials.Username, Password = p };
+
+            var response = await server.GetAsync("https://localhost:7296/ac/login/" + JsonSerializer.Serialize(account));
+            string accountSerialized = await response.Content.ReadAsStringAsync();
+
+            AccountModel result = JsonSerializer.Deserialize<AccountModel>(accountSerialized);
+
+            return result;
         }
 
         public async Task<bool> Register(RegisterCredentialsModel accountModel)

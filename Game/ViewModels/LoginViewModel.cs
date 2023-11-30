@@ -31,13 +31,13 @@ namespace Game.ViewModels
             LoginCommand = new RelayCommand(Login);
         }
 
-        private void Login(object obj)
+        private async void Login(object obj)
         {
             var passBox = (IPasswordContainer)obj;
             var password = passBox.Password;
 
             var loginCred = new LoginCredentialsModel(Username, password);
-            var acc = _accountService.Login(loginCred);
+            var acc = await _accountService.Login(loginCred);
 
             if (acc != null)
             {

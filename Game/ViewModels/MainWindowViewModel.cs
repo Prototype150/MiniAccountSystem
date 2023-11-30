@@ -58,7 +58,13 @@ namespace Game.ViewModels
         }
 
         private void ChangeViewModel(object? sender, PropertyChangedEventArgs e)
-        { 
+        {
+            if (e.PropertyName == "login")
+            {
+                CurrentAccount.Username = "";
+                CurrentAccount.Email = "";
+                CurrentAccount.Password = null;
+            }
             SwitchViews(e.PropertyName);
         }
     }

@@ -55,7 +55,7 @@ namespace Game.ViewModels
 
             if (await _accountService.Register(new RegisterCredentialsModel(Username, password, Email, passwordRepeate)))
             {
-                var acc =_accountService.Login(new LoginCredentialsModel(Username, password));
+                var acc = await _accountService.Login(new LoginCredentialsModel(Username, password));
 
                 _currentAccount.Username = acc.Username;
                 _currentAccount.Email = acc.Email;
