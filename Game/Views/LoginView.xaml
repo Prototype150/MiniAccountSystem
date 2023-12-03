@@ -9,6 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Background="White">
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="DarkRed" FontSize="20"/>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="LOGIN" FontSize="30"/>
                 <TextBox Text="{Binding Username}" Width="200"></TextBox>

@@ -7,6 +7,11 @@ using System.Text.Json;
 
 namespace BLL.Services
 {
+
+    public class ServerResponseException : Exception
+    {
+        public ServerResponseException(string error) : base(error) { }
+    }
     public class AccountService : IAccountService
     {
         public async Task<AccountModel> Login(LoginCredentialsModel loginCredentials)
@@ -18,8 +23,16 @@ namespace BLL.Services
 
             var response = await server.GetAsync("https://localhost:7296/ac/login/" + JsonSerializer.Serialize(account));
 
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                return null;
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                string error = await response.Content.ReadAsStringAsync();
+                throw new ServerResponseException(error);
+            }
+
+            else if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                throw new ServerResponseException("Unknown server side fuck up");
+            }
 
             string accountSerialized = await response.Content.ReadAsStringAsync();
             AccountModel result = JsonSerializer.Deserialize<AccountModel>(accountSerialized);
