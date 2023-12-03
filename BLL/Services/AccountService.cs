@@ -17,11 +17,11 @@ namespace BLL.Services
             var account = new { Username = loginCredentials.Username, Password = p };
 
             var response = await server.GetAsync("https://localhost:7296/ac/login/" + JsonSerializer.Serialize(account));
-            string accountSerialized = await response.Content.ReadAsStringAsync();
 
-            if (string.IsNullOrWhiteSpace(accountSerialized))
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 return null;
 
+            string accountSerialized = await response.Content.ReadAsStringAsync();
             AccountModel result = JsonSerializer.Deserialize<AccountModel>(accountSerialized);
 
             return result;
@@ -40,9 +40,12 @@ namespace BLL.Services
             var account = new { Username = accountModel.Username, Email = accountModel.Email, Password = p };
             string serializedAcc = JsonSerializer.Serialize(account);
 
-            var r = await server.PostAsync("https://localhost:7296/ac/register", JsonContent.Create(serializedAcc));
+            var response = await server.PostAsync("https://localhost:7296/ac/register", JsonContent.Create(serializedAcc));
 
-            string accountSerialized = await r.Content.ReadAsStringAsync();
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                return false;
+
+            string accountSerialized = await response.Content.ReadAsStringAsync();
             bool result = JsonSerializer.Deserialize<bool>(accountSerialized);
 
             return result;
