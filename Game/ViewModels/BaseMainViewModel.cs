@@ -17,6 +17,26 @@ namespace Game.ViewModels
             get { return _currentAccount; }
         }
 
+        public int ErrorMessageHeight
+        {
+            get
+            {
+                return string.IsNullOrWhiteSpace(ErrorMessage) ? 0 : 30;
+            }
+        }
+
+        private string _errorMessage;
+        public string ErrorMessage
+        {
+            get { return _errorMessage; }
+            set
+            {
+                _errorMessage = value;
+                OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(ErrorMessage)));
+                OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(ErrorMessageHeight)));
+            }
+        }
+
         public BaseMainViewModel(AccountModel accountModel)
         {
             _currentAccount = accountModel;

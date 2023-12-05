@@ -1,5 +1,7 @@
 ﻿using BLL.Models;
 using BLL.Services.Interfaces;
+using DAL.Controllers;
+using DAL.Controllers.Interfaces;
 using System.Net.Http.Json;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -7,59 +9,36 @@ using System.Text.Json;
 
 namespace BLL.Services
 {
-
-    public class ServerResponseException : Exception
-    {
-        public ServerResponseException(string error) : base(error) { }
-    }
     public class AccountService : IAccountService
     {
+        private readonly IAccountController _accountController;
+
+        public AccountService(IAccountController accountController)
+        {
+            _accountController = accountController;
+        }
+
         public async Task<AccountModel> Login(LoginCredentialsModel loginCredentials)
         {
-            HttpClient server = new HttpClient();
+            AccountModel account = await _accountController.Login(loginCredentials);
 
-            string p = Marshal.PtrToStringUni(Marshal.SecureStringToGlobalAllocUnicode(loginCredentials.Password));
-            var account = new { Username = loginCredentials.Username, Password = p };
+            if (string.IsNullOrWhiteSpace(account.Username) || account.Username != loginCredentials.Username)
+                throw new ServerRequestException("Major problem detected. Please, contact support");
 
-            var response = await server.GetAsync("https://localhost:7296/ac/login/" + JsonSerializer.Serialize(account));
-
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                string error = await response.Content.ReadAsStringAsync();
-                throw new ServerResponseException(error);
-            }
-
-            else if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                throw new ServerResponseException("Unknown server side fuck up");
-            }
-
-            string accountSerialized = await response.Content.ReadAsStringAsync();
-            AccountModel result = JsonSerializer.Deserialize<AccountModel>(accountSerialized);
-
-            return result;
+            return account;
         }
 
         public async Task<bool> Register(RegisterCredentialsModel accountModel)
         {
-            HttpClient server = new HttpClient();
+            if (Marshal.PtrToStringUni(Marshal.SecureStringToGlobalAllocUnicode(accountModel.Password)) != Marshal.PtrToStringUni(Marshal.SecureStringToGlobalAllocUnicode(accountModel.PasswordRepeate)))
+                throw new ServerRequestException("Password does not match repeated password!");
 
-            string p = Marshal.PtrToStringUni(Marshal.SecureStringToGlobalAllocUnicode(accountModel.Password));
-            string pr = Marshal.PtrToStringUni(Marshal.SecureStringToGlobalAllocUnicode(accountModel.PasswordRepeate));
 
-            if (p != pr)
-                return false;
 
-            var account = new { Username = accountModel.Username, Email = accountModel.Email, Password = p };
-            string serializedAcc = JsonSerializer.Serialize(account);
+            bool result = await _accountController.Register(accountModel);
 
-            var response = await server.PostAsync("https://localhost:7296/ac/register", JsonContent.Create(serializedAcc));
-
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                return false;
-
-            string accountSerialized = await response.Content.ReadAsStringAsync();
-            bool result = JsonSerializer.Deserialize<bool>(accountSerialized);
+            if (!result)
+                throw new ServerRequestException("Something went wrong");
 
             return result;
         }

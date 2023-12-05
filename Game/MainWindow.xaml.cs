@@ -1,4 +1,5 @@
 ﻿using BLL.Services;
+using DAL.Controllers;
 using Game.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace Game
     {
         public MainWindow()
         {
-            DataContext = new MainWindowViewModel(new AccountService());
+            DataContext = new MainWindowViewModel(new AccountService(new AccountController()));
 
             InitializeComponent();
         }

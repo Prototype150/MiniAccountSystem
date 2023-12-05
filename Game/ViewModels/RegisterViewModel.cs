@@ -1,5 +1,6 @@
 ﻿using BLL.Models;
 using BLL.Services.Interfaces;
+using DAL.Controllers;
 using Game.Commands;
 using Game.Models.Interfaces;
 using System;
@@ -49,17 +50,49 @@ namespace Game.ViewModels
 
         private async void Register(object obj)
         {
-            var passBox = ((IPasswordContainer password, IPasswordContainer passwordRepeate))obj;
-            var password = passBox.password.Password;
-            var passwordRepeate = passBox.passwordRepeate.Password;
-
-            if (await _accountService.Register(new RegisterCredentialsModel(Username, password, Email, passwordRepeate)))
+            try
             {
-                var acc = await _accountService.Login(new LoginCredentialsModel(Username, password));
+                if (string.IsNullOrWhiteSpace(Username))
+                {
+                    ErrorMessage = "Username is empty";
+                    return;
+                }
+                else if (string.IsNullOrWhiteSpace(Email))
+                {
+                    ErrorMessage = "Email is empty";
+                    return;
+                }
+                var passBox = ((IPasswordContainer password, IPasswordContainer passwordRepeate))obj;
+                var password = passBox.password.Password;
+                var passwordRepeate = passBox.passwordRepeate.Password;
 
-                _currentAccount.Username = acc.Username;
-                _currentAccount.Email = acc.Email;
-                ViewModelChanged(new PropertyChangedEventArgs("main"));
+                if(password == null || password.Length == 0)
+                {
+                    ErrorMessage = "Password is empty";
+                    return;
+                }
+
+                else if(passwordRepeate == null || passwordRepeate.Length == 0)
+                {
+                    ErrorMessage = "Password repeate is empty";
+                    return;
+                }
+
+                if (await _accountService.Register(new RegisterCredentialsModel(Username, password, Email, passwordRepeate)))
+                {
+                    var acc = await _accountService.Login(new LoginCredentialsModel(Username, password));
+
+                    _currentAccount.Username = acc.Username;
+                    _currentAccount.Email = acc.Email;
+                    ViewModelChanged(new PropertyChangedEventArgs("main"));
+                }
+            }
+            catch(ServerRequestException e)
+            {
+                if (e.Message == "username" || e.Message == "email")
+                    ErrorMessage = e.Message + " already exists.";
+                else
+                    ErrorMessage = e.Message;
             }
         }
     }

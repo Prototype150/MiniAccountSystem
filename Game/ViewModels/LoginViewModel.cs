@@ -1,6 +1,7 @@
 ﻿using BLL.Models;
 using BLL.Services;
 using BLL.Services.Interfaces;
+using DAL.Controllers;
 using Game.Commands;
 using Game.Models.Interfaces;
 using System.ComponentModel;
@@ -13,16 +14,7 @@ namespace Game.ViewModels
     {
         private IAccountService _accountService;
 
-        private string _errorMessage;
-        public string ErrorMessage
-        {
-            get { return _errorMessage; }
-            set 
-            {
-                _errorMessage = value;
-                OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(ErrorMessage)));
-            }
-        }
+        
 
         private string _userName;
         public string Username
@@ -72,12 +64,11 @@ namespace Game.ViewModels
                     ViewModelChanged(new PropertyChangedEventArgs("main"));
                 }
             }
-            catch(HttpRequestException e)
+            catch(HttpRequestException)
             {
                 ErrorMessage = "No server :(";
             }
-
-            catch(ServerResponseException e)
+            catch(ServerRequestException e)
             {
                 if (e.Message == "login" || e.Message == "password")
                     ErrorMessage = "Wrong " + e.Message + "!";
